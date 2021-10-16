@@ -47,6 +47,11 @@ You can choose which profiles will be scraped:
 $ collect -p=allocs -p=heap -u=http://localhost:8080
 ```
 
+Query parameters for profiles are also supported:
+```bash
+$ collect -p=trace\?seconds\=20 -u=http://localhost:8080
+```
+
 Use `-l` flag to collect profiles in endless loop(until Ctrl-C). This will collect profiles each 60 seconds (you can redefine interval with `-i`).
 ```bash
 $ collect -l -u=http://localhost:8080
