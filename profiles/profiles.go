@@ -19,9 +19,9 @@ import (
 
 // Dump will dump every profile into given folder following this structure:
 // - provided directory
-//   - host
-//    - YYYY.MM.DD
-//      - HH:MM:SS
+//   - host port
+//    - YYYY MM DD
+//      - HH MM SS
 //        - profile
 func Dump(ctx context.Context, dir, base string, profiles map[string][]byte) error {
 	u, err := url.Parse(base)
@@ -29,7 +29,7 @@ func Dump(ctx context.Context, dir, base string, profiles map[string][]byte) err
 		return err
 	}
 
-	folder := path.Join(dir, u.Host) + "/" + time.Now().Format("2006.01.02/15:04:05")
+	folder := path.Join(dir, u.Hostname()+" "+u.Port()) + "/" + time.Now().Format("2006 01 02/15 04 05")
 	if err := os.MkdirAll(folder, os.ModePerm); err != nil {
 		return fmt.Errorf("cannot create directory %q: %w", folder, err)
 	}

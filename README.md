@@ -28,9 +28,9 @@ $ collect -u=http://localhost:8080
 This will download allocs, heap, goroutine and cpu profiles and save it into directory structure like this:
 
 ```
-- localhost:8080
-  - YYYY.MM.DD
-    - HH:MM:SS
+- localhost 8080
+  - YYYY MM DD
+    - HH MM SS
       - allocs
       - heap
       - profile

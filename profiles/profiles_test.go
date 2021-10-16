@@ -150,7 +150,7 @@ func TestDumpCannotCreateDirectory(t *testing.T) {
 	log.SetOutput(testLog)
 	defer log.SetOutput(os.Stdout)
 
-	err := Dump(context.Background(), "/dev/null/", "http://localhost:8080", nil)
+	err := Dump(context.Background(), "/dev/null/:", "http://localhost:8080", nil)
 	if err == nil {
 		t.Fatalf("should return an error when cannot create directory")
 	}
