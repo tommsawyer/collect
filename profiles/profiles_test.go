@@ -108,6 +108,9 @@ func TestDump(t *testing.T) {
 		"heap":   []byte("heap"),
 	}
 	err = Dump(context.Background(), testDir, "http://localhost:8080", profiles)
+	if err != nil {
+		t.Fatalf("error should be nil, but got %v", err)
+	}
 
 	fileContents := map[string][]byte{}
 	err = filepath.Walk(testDir, func(path string, info fs.FileInfo, err error) error {
