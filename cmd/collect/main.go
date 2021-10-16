@@ -10,6 +10,7 @@ import (
 
 	"github.com/jessevdk/go-flags"
 	"github.com/tommsawyer/collect/profiles"
+	"golang.org/x/sync/errgroup"
 )
 
 var cfg struct {
@@ -28,24 +29,23 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt)
+	go func() {
+		<-interrupt
+		cancel()
+	}()
+
 	if !cfg.Loop {
-		ctx := context.Background()
-		if err := profiles.CollectAndDump(ctx, cfg.Hosts, cfg.Profiles); err != nil {
+		if err := collectAndDump(ctx, "./", cfg.Hosts, cfg.Profiles); err != nil {
 			log.Fatalln(err)
 		}
 
 		return
 	}
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	go func() {
-		<-c
-		cancel()
-	}()
-
 	for {
-		if err := profiles.CollectAndDump(ctx, cfg.Hosts, cfg.Profiles); err != nil {
+		if err := collectAndDump(ctx, "./", cfg.Hosts, cfg.Profiles); err != nil {
 			if errors.Is(err, context.Canceled) {
 				return
 			}
@@ -60,4 +60,22 @@ func main() {
 			return
 		}
 	}
+}
+
+func collectAndDump(ctx context.Context, baseDir string, hosts []string, profilesToCollect []string) error {
+	g, ctx := errgroup.WithContext(ctx)
+
+	for _, host := range hosts {
+		h := host
+		g.Go(func() error {
+			collected, err := profiles.Collect(ctx, h, profilesToCollect)
+			if err != nil {
+				return err
+			}
+
+			return profiles.Dump(ctx, baseDir, h, collected)
+		})
+	}
+
+	return g.Wait()
 }
