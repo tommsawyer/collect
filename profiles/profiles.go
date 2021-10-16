@@ -55,7 +55,7 @@ func Collect(ctx context.Context, baseURL string, profiles []string) (map[string
 	}
 
 	var mx sync.Mutex
-	result := make(map[string][]byte, len(profiles))
+	collectedProfiles := make(map[string][]byte, len(profiles))
 
 	g, ctx := errgroup.WithContext(ctx)
 	for _, profile := range profiles {
@@ -80,7 +80,7 @@ func Collect(ctx context.Context, baseURL string, profiles []string) (map[string
 			}
 
 			mx.Lock()
-			result[profileName] = bytes
+			collectedProfiles[profileName] = bytes
 			mx.Unlock()
 
 			log.Printf("[%s] successfully collected %s\n", baseURL, profileName)
@@ -91,5 +91,5 @@ func Collect(ctx context.Context, baseURL string, profiles []string) (map[string
 		return nil, err
 	}
 
-	return result, nil
+	return collectedProfiles, nil
 }
