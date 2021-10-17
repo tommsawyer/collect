@@ -1,4 +1,6 @@
 # Collect
+[![Go Report Card](https://goreportcard.com/badge/github.com/tommsawyer/collect)](https://goreportcard.com/report/github.com/tommsawyer/collect)
+
 Allows you to collect all pprof profiles with one command.
 
 ## Installation
