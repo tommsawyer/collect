@@ -12,15 +12,15 @@ $ go get github.com/tommsawyer/collect/cmd/collect
 
 ## Motivation
 
-Sometimes I need to quickly collect all pprof profiles for future optimization. Its very frustrating to do it with long curl commands like:
+Sometimes I need to quickly collect all pprof profiles for future optimization. It's very frustrating to do it with long curl commands like:
 ```bash
 $ curl -sK -v http://localhost:8080/debug/pprof/heap > heap.out && curl -sK -v http://localhost:8080/debug/pprof/allocs > allocs.out && curl -sK -v http://localhost:8080/debug/pprof/goroutine > goroutine.out && curl -sK -v http://localhost:8080/debug/pprof/profile > profile.out && curl -o ./trace "http://localhost:8080/debug/pprof/trace?debug=1&seconds=20"
 
 ```
 
-Also it:
-- doesnt run concurrently, resulting in slow execution
-- you have to manually move profiles to some directories if you want to store them for future comparsion
+Also:
+- it doesn't run concurrently, resulting in slow execution
+- you have to manually move profiles to some directories if you want to store them for future comparison
 - you need to wait for the command to complete and run it again if you want to collect profiles several times
 
 ## Usage
@@ -28,7 +28,7 @@ Provide url from which profiles will be scraped:
 ```bash
 $ collect -u=http://localhost:8080
 ```
-This will download allocs, heap, goroutine and cpu profiles and save it into directory structure like this:
+This will download allocs, heap, goroutine and cpu profiles and save them into a directory structure like this:
 
 ```
 - localhost 8080
@@ -55,7 +55,7 @@ Query parameters for profiles are also supported:
 $ collect -p=trace\?seconds\=20 -u=http://localhost:8080
 ```
 
-Use `-l` flag to collect profiles in endless loop(until Ctrl-C). This will collect profiles each 60 seconds (you can redefine interval with `-i`).
+Use `-l` flag to collect profiles in an endless loop(until Ctrl-C). This will collect profiles every 60 seconds (you can redefine interval with `-i`).
 ```bash
 $ collect -l -u=http://localhost:8080
 ```
