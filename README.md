@@ -1,5 +1,6 @@
 # Collect
 [![Go Report Card](https://goreportcard.com/badge/github.com/tommsawyer/collect)](https://goreportcard.com/report/github.com/tommsawyer/collect)
+[![codecov](https://codecov.io/gh/tommsawyer/collect/branch/main/graph/badge.svg?token=63GFZ0O3OR)](https://codecov.io/gh/tommsawyer/collect)
 
 Allows you to collect all pprof profiles with one command.
 
