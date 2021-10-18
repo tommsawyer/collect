@@ -14,10 +14,11 @@ import (
 )
 
 var cfg struct {
-	Hosts    []string      `short:"u" description:"hosts from which profiles will be collected" required:"true"`
-	Profiles []string      `short:"p" description:"profiles to collect. Possible options: allocs/heap/goroutine/profile/trace." default:"allocs" default:"heap" default:"goroutine" default:"profile"`
-	Loop     bool          `short:"l" description:"collect many times (until Ctrl-C)"`
-	Interval time.Duration `short:"i" description:"interval between collecting (use with -l)" default:"60s"`
+	Hosts     []string      `short:"u" description:"hosts from which profiles will be collected" required:"true"`
+	Profiles  []string      `short:"p" description:"profiles to collect. Possible options: allocs/heap/goroutine/profile/trace." default:"allocs" default:"heap" default:"goroutine" default:"profile"`
+	Loop      bool          `short:"l" description:"collect many times (until Ctrl-C)"`
+	Interval  time.Duration `short:"i" description:"interval between collecting (use with -l)" default:"60s"`
+	Directory string        `short:"d" description:"directory to put the pprof files in" default:"."`
 }
 
 func main() {
@@ -37,7 +38,7 @@ func main() {
 	}()
 
 	if !cfg.Loop {
-		if err := collectAndDump(ctx, "./", cfg.Hosts, cfg.Profiles); err != nil {
+		if err := collectAndDump(ctx, cfg.Directory, cfg.Hosts, cfg.Profiles); err != nil {
 			log.Fatalln(err)
 		}
 
@@ -45,7 +46,7 @@ func main() {
 	}
 
 	for {
-		if err := collectAndDump(ctx, "./", cfg.Hosts, cfg.Profiles); err != nil {
+		if err := collectAndDump(ctx, cfg.Directory, cfg.Hosts, cfg.Profiles); err != nil {
 			if errors.Is(err, context.Canceled) {
 				return
 			}
