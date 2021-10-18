@@ -67,3 +67,4 @@ $ collect -l -u=http://localhost:8080
 | -p          | allocs,heap,goroutine,profile  | profiles to collect.                      |
 | -l          | false                          | collect profiles in endless loop          |
 | -i          | 60s                            | interval between collecting. use with -l  |
+| -d          | ./                             | directory to put the pprof files in.      |
