@@ -61,10 +61,11 @@ $ collect -l -u=http://localhost:8080
 ```
 
 ## Command-Line flags
-| Flag        | Default                        | Usage                                     |
-| ----------- | -------------------------------| ----------------------------------------- |
-| -u          |                                | url from which profiles will be collected.|
-| -p          | allocs,heap,goroutine,profile  | profiles to collect.                      |
-| -l          | false                          | collect profiles in endless loop          |
-| -i          | 60s                            | interval between collecting. use with -l  |
-| -d          | ./                             | directory to put the pprof files in.      |
+| Flag        | Default                        | Usage                                      |
+| ----------- | -------------------------------| -------------------------------------------|
+| -u          |                                | url from which profiles will be collected. |
+| -p          | allocs,heap,goroutine,profile  | profiles to collect.                       |
+| -l          | false                          | collect profiles in endless loop           |
+| -i          | 60s                            | interval between collecting. use with -l   |
+| -d          | ./                             | directory to put the pprof files in.       |
+| -k          | false                          | keep going collect if some requests failed.|
