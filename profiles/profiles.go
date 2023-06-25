@@ -21,13 +21,14 @@ import (
 // Dump will dump every profile into given folder following this structure:
 // - provided directory
 //   - host port
-//    - YYYY MM DD
-//      - HH MM SS
-//        - profile
+//   - YYYY MM DD
+//   - HH MM SS
+//   - profile
 func Dump(ctx context.Context, dir, base string, profiles map[string][]byte) error {
 	if len(profiles) == 0 {
 		return nil
 	}
+
 	u, err := url.Parse(base)
 	if err != nil {
 		return err
@@ -52,7 +53,8 @@ func Dump(ctx context.Context, dir, base string, profiles map[string][]byte) err
 // Collect will collect all provided profiles.
 //
 // You can add query parameters to profile like so:
-//  Collect(ctx, "http://localhost:8080", []string{"trace?seconds=5"})
+//
+//	Collect(ctx, "http://localhost:8080", []string{"trace?seconds=5"})
 func Collect(ctx context.Context, baseURL string, profiles []string, ignoreNetworkErrors bool) (map[string][]byte, error) {
 	client := &http.Client{
 		Timeout: time.Minute,
