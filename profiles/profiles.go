@@ -2,6 +2,7 @@ package profiles
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -24,6 +25,9 @@ import (
 //      - HH MM SS
 //        - profile
 func Dump(ctx context.Context, dir, base string, profiles map[string][]byte) error {
+	if len(profiles) == 0 {
+		return nil
+	}
 	u, err := url.Parse(base)
 	if err != nil {
 		return err
@@ -49,7 +53,7 @@ func Dump(ctx context.Context, dir, base string, profiles map[string][]byte) err
 //
 // You can add query parameters to profile like so:
 //  Collect(ctx, "http://localhost:8080", []string{"trace?seconds=5"})
-func Collect(ctx context.Context, baseURL string, profiles []string) (map[string][]byte, error) {
+func Collect(ctx context.Context, baseURL string, profiles []string, ignoreNetworkErrors bool) (map[string][]byte, error) {
 	client := &http.Client{
 		Timeout: time.Minute,
 	}
@@ -70,6 +74,10 @@ func Collect(ctx context.Context, baseURL string, profiles []string) (map[string
 			log.Printf("[%s] collecting %s\n", baseURL, profileName)
 			resp, err := client.Do(req)
 			if err != nil {
+				if ignoreNetworkErrors && !errors.Is(err, context.Canceled) {
+					log.Printf("cannot collect %s: %s", profileName, err.Error())
+					return nil
+				}
 				return fmt.Errorf("cannot collect %s: %w", profileName, err)
 			}
 			defer resp.Body.Close()

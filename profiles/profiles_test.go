@@ -39,7 +39,7 @@ func TestCollectProfiles(t *testing.T) {
 
 	t.Run("collect one profile", func(t *testing.T) {
 		testLog.LogTo(t)
-		profiles, err := Collect(context.Background(), srv.URL, []string{"allocs"})
+		profiles, err := Collect(context.Background(), srv.URL, []string{"allocs"}, false)
 		if err != nil {
 			t.Errorf("error should be nil, but got %v", err)
 		}
@@ -51,7 +51,7 @@ func TestCollectProfiles(t *testing.T) {
 
 	t.Run("collect many profiles", func(t *testing.T) {
 		testLog.LogTo(t)
-		profiles, err := Collect(context.Background(), srv.URL, []string{"allocs", "profile"})
+		profiles, err := Collect(context.Background(), srv.URL, []string{"allocs", "profile"}, false)
 		if err != nil {
 			t.Errorf("error should be nil, but got %v", err)
 		}
@@ -66,7 +66,7 @@ func TestCollectProfiles(t *testing.T) {
 
 	t.Run("collect profile with query parameters", func(t *testing.T) {
 		testLog.LogTo(t)
-		profiles, err := Collect(context.Background(), srv.URL, []string{"trace?seconds=5"})
+		profiles, err := Collect(context.Background(), srv.URL, []string{"trace?seconds=5"}, false)
 		if err != nil {
 			t.Errorf("error should be nil, but got %v", err)
 		}
@@ -77,16 +77,23 @@ func TestCollectProfiles(t *testing.T) {
 	})
 
 	t.Run("returns error when cannot build url", func(t *testing.T) {
-		_, err := Collect(context.Background(), "http://wrong.wrong\n", []string{"allocs"})
+		_, err := Collect(context.Background(), "http://wrong.wrong\n", []string{"allocs"}, false)
 		if err == nil || !strings.Contains(err.Error(), "cannot build url:") {
 			t.Error("should return error when wrong url provided")
 		}
 	})
 
 	t.Run("returns error when server is unreachable", func(t *testing.T) {
-		_, err := Collect(context.Background(), "http://wrong.wrong", []string{"allocs"})
+		_, err := Collect(context.Background(), "http://wrong.wrong", []string{"allocs"}, false)
 		if err == nil || !strings.Contains(err.Error(), "cannot collect allocs:") {
 			t.Error("should return error when server is unreachable")
+		}
+	})
+
+	t.Run("returns no error when server is unreachable and ignore network errors is true", func(t *testing.T) {
+		_, err := Collect(context.Background(), "http://wrong.wrong", []string{"allocs"}, true)
+		if err != nil {
+			t.Errorf("error should be nil, but got %v", err)
 		}
 	})
 }

@@ -19,6 +19,7 @@ var cfg struct {
 	Loop      bool          `short:"l" description:"collect many times (until Ctrl-C)"`
 	Interval  time.Duration `short:"i" description:"interval between collecting (use with -l)" default:"60s"`
 	Directory string        `short:"d" description:"directory to put the pprof files in" default:"."`
+	KeepGoing bool          `short:"k" description:"keep going collect profiles if some requests failed"`
 }
 
 func main() {
@@ -38,7 +39,7 @@ func main() {
 	}()
 
 	if !cfg.Loop {
-		if err := collectAndDump(ctx, cfg.Directory, cfg.Hosts, cfg.Profiles); err != nil {
+		if err := collectAndDump(ctx, cfg.Directory, cfg.Hosts, cfg.Profiles, cfg.KeepGoing); err != nil {
 			log.Fatalln(err)
 		}
 
@@ -46,7 +47,7 @@ func main() {
 	}
 
 	for {
-		if err := collectAndDump(ctx, cfg.Directory, cfg.Hosts, cfg.Profiles); err != nil {
+		if err := collectAndDump(ctx, cfg.Directory, cfg.Hosts, cfg.Profiles, cfg.KeepGoing); err != nil {
 			if errors.Is(err, context.Canceled) {
 				return
 			}
@@ -63,13 +64,13 @@ func main() {
 	}
 }
 
-func collectAndDump(ctx context.Context, baseDir string, hosts []string, profilesToCollect []string) error {
+func collectAndDump(ctx context.Context, baseDir string, hosts []string, profilesToCollect []string, ignoreNetworkErrors bool) error {
 	g, ctx := errgroup.WithContext(ctx)
 
 	for _, host := range hosts {
 		h := host
 		g.Go(func() error {
-			collected, err := profiles.Collect(ctx, h, profilesToCollect)
+			collected, err := profiles.Collect(ctx, h, profilesToCollect, ignoreNetworkErrors)
 			if err != nil {
 				return err
 			}
